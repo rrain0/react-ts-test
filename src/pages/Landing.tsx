@@ -14,6 +14,8 @@ const Landing = () => {
                     Learn React
                 </a></div>
                 <div><Link className={s.AppLink} to={"/throw-error"}>Throw Error</Link></div>
+                <div><Link className={s.AppLink} to={"/samurai/login"}>Samurai Login</Link></div>
+                <div><Link className={s.AppLink} to={"/samurai/profile"}>Samurai Profile</Link></div>
                 <div><Link className={s.AppLink} to={"/socketio/chat"}>Socket IO test in SamuraiJS Chat</Link></div>
             </div>
         </header>

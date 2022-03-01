@@ -5,6 +5,8 @@ import ErrorBoundary from "./components/ErrorBoundary";
 const SocketIOChat = React.lazy(()=>import("./pages/SocketIOChat")) // React lazy
 const ThrowError = React.lazy(()=>import("./pages/ThrowError")) // React lazy
 const Landing = React.lazy(()=>import("./pages/Landing")) // React lazy
+const Login = React.lazy(()=>import("./pages/Login")) // React lazy
+const Profile = React.lazy(()=>import("./pages/Profile")) // React lazy
 
 
 
@@ -18,6 +20,8 @@ function App() {
                 <Route path="/landing" element={<Landing/>} />
                 <Route path="/throw-error" element={<ThrowError/>} />
                 <Route path="/socketio/chat" element={<SocketIOChat/>} />
+                <Route path="/samurai/login" element={<Login/>} />
+                <Route path="/samurai/profile" element={<Profile/>} />
                 <Route path='*' element={<Navigate to='/landing'/>} />
             </Routes>
         </Suspense>
