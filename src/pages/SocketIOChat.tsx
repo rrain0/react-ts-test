@@ -1,7 +1,8 @@
 
-import {useContext, useEffect, useState} from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { ChatContext } from "./SocketIOChatContext";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
+import * as React from "react";
 
 
 
@@ -57,7 +58,6 @@ const SocketIOChat = () => {
                 //socket.removeEventListener('close', closeListener)
                 socket.close()
             }
-            debugger
         }
     },[])
 
@@ -111,8 +111,23 @@ const Chat = () => {
 
 
 const Messages = ({messages}: {messages: SocketMsg[]}) => {
-    return <div style={{ height: '90vh', overflowY: 'auto' }}>
+    const bottomAnchorRef = useRef<HTMLDivElement>(null)
+    const [autoScroll, setAutoScroll] = useState(false)
+
+    // автоперемотка вниз
+    useEffect(()=>{
+        if (autoScroll) bottomAnchorRef.current?.scrollIntoView({behavior: 'smooth'})
+    },[messages, autoScroll])
+
+    const onScroll = (ev: React.UIEvent<HTMLDivElement,UIEvent>) => {
+        let elem = ev.currentTarget
+        if (elem.scrollHeight - elem.scrollTop >= elem.clientHeight + 20) setAutoScroll(false)
+        else setAutoScroll(true)
+    }
+
+    return <div style={{ height: '90vh', overflowY: 'auto' }} onScroll={onScroll}>
         {messages.map((m,i)=><Message msg={m} key={i}/>)}
+        <div ref={bottomAnchorRef}></div>
     </div>
 }
 
