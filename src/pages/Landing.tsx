@@ -1,5 +1,6 @@
 import React from "react";
 import reactLogo from '../assets/icons/react-logo.svg';
+//import reactLogo from '@ic/react-logo.svg';
 import s from './Landing.module.scss';
 import {Link} from "react-router-dom";
 
@@ -17,6 +18,7 @@ const Landing = () => {
                 <div><Link className={s.AppLink} to={"/samurai/login"}>Samurai Login</Link></div>
                 <div><Link className={s.AppLink} to={"/samurai/profile"}>Samurai Profile</Link></div>
                 <div><Link className={s.AppLink} to={"/socketio/chat"}>Socket IO test in SamuraiJS Chat</Link></div>
+                <div><Link className={s.AppLink} to={"/svg-test"}>SvgTest</Link></div>
             </div>
         </header>
     </div>

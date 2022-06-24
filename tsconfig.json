@@ -1,11 +1,15 @@
 {
     "compilerOptions": {
-        "target": "es2016",
+        "target": "es6",
         "lib": [
             "dom",
             "dom.iterable",
             "esnext"
         ],
+
+        // allow resolve src folder as module. You can use: import LoadingIc from "src/components/SvgIcons/LoadingIc"
+        "baseUrl":".",
+
         "allowJs": true,
         "skipLibCheck": true,
         "esModuleInterop": true,
@@ -23,8 +27,17 @@
         "isolatedModules": true,
         "noEmit": true,
         "jsx": "react-jsx",
+
+
+        /*"baseUrl": "./src",
+        "paths": {
+            "@ic*//*": ["./assets/icons*//*"],
+            "@im*//*": ["./assets/images*//*"],
+        },*/
+
+
     },
     "include": [
         "src"
-    ]
+    ],
 }

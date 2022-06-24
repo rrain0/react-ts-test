@@ -1,0 +1,25 @@
+
+
+
+<svg xmlns="http://www.w3.org/2000/svg"
+	viewBox="0 0 100 100"
+	fill="black" stroke="black">
+	<!-- Delete width and height of <svg> tag, only viewBox is needed -->
+	<!-- If you specify there fill or stroke, they will be default -->
+
+	<!-- DO NOT PUT COMMENTS ABOVE <svg> TAG - it creates extra element-->
+
+
+	<!--
+        Delete all fill and stroke in children
+        in order them to take fill and stroke from parent <svg> tag.
+        Set stroke="none" or fill="none" if you want to disable them.
+    -->
+	<circle cx="50" cy="50" r="35" 
+		stroke-width="5" 
+		fill="none"  />
+
+	<circle cx="74" cy="26" r="12"
+		stroke="none" />
+
+</svg>

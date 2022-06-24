@@ -1,0 +1,31 @@
+
+
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 100 100">
+    <!-- Delete width and height of <svg> tag, only viewBox is needed -->
+    <!-- If you specify there fill or stroke, they will be default -->
+
+    <!-- DO NOT PUT COMMENTS ABOVE <svg> TAG - it creates extra element-->
+
+    <!-- USING CSS VARIABLES -->
+    <style>
+        :root {
+            --first-circle-color: red;
+            --second-circle-color: black;
+            --third-circle-color: green;
+            --rect-color: blue;
+        }
+    </style>
+
+
+    <!--
+        Delete all fill and stroke in children
+        in order them to take fill and stroke from parent <svg> tag.
+        Set stroke="none" or fill="none" if you want to disable them.
+    -->
+    <rect x="16" y="57" width="68" height="16" stroke="none" fill="var(--rect-color)" />
+    <circle cx="25.5" cy="40.5" r="9.5" stroke="none" fill="var(--first-circle-color)" />
+    <circle cx="50.5" cy="40.5" r="9.5" stroke="none" fill="var(--second-circle-color)" />
+    <circle cx="74.5" cy="40.5" r="9.5" stroke="none" fill="var(--third-circle-color)" />
+
+</svg>
