@@ -3,7 +3,9 @@ import { ReactComponent as SomeSvgSvg } from 'src/assets/icons/some-svg-4.svg'
 
 // USING CSS VARIABLES
 
-const SomeSvgIc4 = ({color1, color2, color3, color4, size}: {color1:string, color2:string, color3:string, color4:string, size?:number}) => {
+const SomeSvgIc4 = (
+    {color1, color2, color3, color4, size}
+        : {color1:string, color2:string, color3:string, color4:string, size?:number}) => {
 
     const svgRef = useRef<SVGSVGElement>(null)
     useLayoutEffect(()=>{

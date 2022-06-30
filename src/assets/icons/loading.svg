@@ -14,6 +14,7 @@
         Delete all fill and stroke in children
         in order them to take fill and stroke from parent <svg> tag.
         Set stroke="none" or fill="none" if you want to disable them.
+        (!!! if you not set them, then they can draw with defaults)
     -->
 	<circle cx="50" cy="50" r="35" 
 		stroke-width="5" 

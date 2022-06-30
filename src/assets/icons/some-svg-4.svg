@@ -22,6 +22,7 @@
         Delete all fill and stroke in children
         in order them to take fill and stroke from parent <svg> tag.
         Set stroke="none" or fill="none" if you want to disable them.
+        (!!! if you not set them, then they can draw with defaults)
     -->
     <rect x="16" y="57" width="68" height="16" stroke="none" fill="var(--rect-color)" />
     <circle cx="25.5" cy="40.5" r="9.5" stroke="none" fill="var(--first-circle-color)" />
