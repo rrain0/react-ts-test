@@ -19,6 +19,7 @@ const Landing = () => {
                 <div><Link className={s.AppLink} to={"/samurai/profile"}>Samurai Profile</Link></div>
                 <div><Link className={s.AppLink} to={"/socketio/chat"}>Socket IO test in SamuraiJS Chat</Link></div>
                 <div><Link className={s.AppLink} to={"/svg-test"}>SvgTest</Link></div>
+                <div><Link className={s.AppLink} to={"/state-and-ref-test"}>State And Ref Test</Link></div>
             </div>
         </header>
     </div>

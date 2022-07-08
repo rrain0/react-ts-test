@@ -21,6 +21,7 @@ import scss from '..../scss-style.module.scss'
 ```
 !!! классы в стилях теперь называть в camelcase т.к. дефис запрещён в имени переменных js
 
+
 ### Inline Styles
 style прямо в теге
 ```<div className="nav-wrapper blue darken-1" style={{ padding: '0 2rem', margin: "5px", width: 100 }}>...</div>```
@@ -43,12 +44,8 @@ style прямо в теге
 Реакт в dev mode может перерисовывать компоненту 2+ раз просто так!!!
 
 
-## Порядок изменений state и перерендера
-ДО ЗАВЕРШЕНИЯ МЕТОДА КОЛБЭКА НОВЫЕ ПРОПСЫ НЕ ПОСТУПЯТ В КОМПОНЕНТУ!!!
-И все необходимые изменённые параметры надо кидать в аргументы функции или использовать хуки, которые в свою очередь внутри используют state/local state.
 
-
-## Правильное изменение state
+## Правильное изменение state вручную:
 Если в state ССЫЛКА на объект не изменилась (либо значение у примитивов (числа, строки, boolean...)), то он считается неизменным и компонента не перерисуется.
 Например есть `state`:
 ```
@@ -85,12 +82,12 @@ state = {
 
 
 
-Передача URL в props для классовой компоненты - withRouter
-1) connect(mstp, mdtp)(withRouter(Component))
+## Передача URL в props для классовой компоненты - withRouter
+1) `connect(mstp, mdtp)(withRouter(Component))`
 2) Указываем переменную в `<Route path="profile/:userId?" .... />`
 : - начало переменной
-? - если есть, то параметр необязателен
-3) достаём userId из props.match.params.userId
+? - параметр необязателен
+3) достаём `userId` из `props.match.params.userId`
 
 
 
@@ -115,85 +112,11 @@ export const withAuthRedirect =
 
 
 
-
-useEffect:
-
-`componentDidMount => useEffect(()=>{...}, [])`
-вызовется, когда эта компонента и всё её дерево дочерних компонент отрендерится впервые
-
-
-`componentDidUpdate => useEffect(()=>{...})`
-вызовется после каждого рендера
-
-```
-componentDidMount + componentWillUnmount =>
-useEffect(
-    // чтобы объект листенера был удалён, добавляемый и удаляемый объекты должны быть одинаковы по ссылке
-    let someEventListener = () => {}
-
-    // функция выпонится после вмонтирования компоненты (componentDidMount)
-    window.addEventListener("mousemove", someEventListener)
-
-    // функция выпонится перед размонтированием компоненты (componentWillUnmount)
-    return ()=>window.removeEventListener("mousemove", someEventListener),
-    []
-)
-```
-returned function будет выполняться перед каждым следующим выполнением эффекта + перед размонтированием
-дальше всё зависит от массива зависимостей:
-
-`undefined` => эффект после каждого рендера
-
-`[]` => эффект только после первого рендера (после вмонтирования компоненты)
-
-`[deps1, deps2, deps3, ...]` => эффект после ближайшего рендера, когда изменится хотя бы одна из зависимостей deps1, deps2, deps3, ...
-
-
-
-!!! Зависимости в массивах всегда сравниваются по ===
-можно сделать JSON.stringify({name:'Tom'}) для объектов
-
-
-
-useCallback is able to memorize a function. useMemo is able to memorize an object
-
-
-
-You can hack the useMemo hook to imitate a componentWillMount lifecycle event. Just do:
-const Component = () => {
-   useMemo(() => {
-     // componentWillMount events
-   },[]);
-   useLayoutEffect(() => {
-     // componentWillMount events
-   },[]);
-   useEffect(() => {
-     // componentDidMount events
-     return () => {
-       // componentWillUnmount events
-     }
-   }, []);
-};
-
-
-
-This is the way how I simulate constructor in functional components using the useRef hook:
-function Component(props) {
-    const willMount = useRef(true);
-    if (willMount.current) {
-        console.log('This runs only once before rendering the component.');
-        willMount.current = false;
-    }
-
-    return (<h1>Meow world!</h1>);
-}
-
-
-
-useLayoutEffect - аналогично useEffect, но выполняется после того, как DOM готов к отрисовке, но перед самой отрисовкой
-https://ru.reactjs.org/docs/hooks-reference.html#uselayouteffect
-аналог:
-showChild && <Child /> + useEffect(() => { setShowChild(true); }, [])
+# Обновления состояния компонент
+`componentDidMount()` - вызывается после встраивания нового узла в DOM
+`componentDidUpdate()` - вызывается после обновления пропсов
+`render()` - вызывается после `componentDidUpdate()`
+`componentWillUnmount()` - вызывается перед размонтированием компоненты (после удаления реального DOM узла)
 
 
 
@@ -208,23 +131,104 @@ showChild && <Child /> + useEffect(() => { setShowChild(true); }, [])
 По факту просто выносят логику из компоненты в удобное место и используются удобным способом.
 https://ru.reactjs.org/docs/hooks-reference.html#usecallback
 
-Про массив зависимостей deps:
-undefined - хук будет выполняться каждый раз при рендере
-[] - хук выполнится только при первом рендере
-[...values] - хук выполнится при изменении хотя бы одной зависимости
+## useEffect:
 
-useCallback:
+`componentDidMount()` станет `useEffect(()=>{...}, [])`
+Вызовется, когда эта компонента и всё её дерево дочерних компонент отрендерится впервые
+
+`componentDidUpdate` станет `useEffect(()=>{...})`
+Вызовется после каждого рендера
+
+`componentDidMount + componentWillUnmount` станет
+```
+useEffect(
+    // чтобы объект листенера был удалён, добавляемый и удаляемый объекты должны быть одинаковы по ссылке
+    let someEventListener = () => {}
+
+    // функция выпонится после вмонтирования компоненты (componentDidMount)
+    window.addEventListener("mousemove", someEventListener)
+
+    // функция выпонится перед размонтированием компоненты (componentWillUnmount)
+    return ()=>window.removeEventListener("mousemove", someEventListener),
+    []
+)
+```
+Returned function будет выполняться перед каждым следующим выполнением эффекта + перед размонтированием.
+
+### Массив зависимостей хуков:
+`undefined` => эффект после каждого рендера
+`[]` => эффект только после первого рендера (после вмонтирования компоненты)
+`[deps1, deps2, deps3, ...]` => эффект после ближайшего рендера, когда изменится хотя бы одна из зависимостей deps1, deps2, deps3, ...
+
+
+
+!!! Зависимости в массивах всегда сравниваются по ===
+можно сделать JSON.stringify({name:'Tom'}) для объектов
+
+
+
+You can hack the useMemo hook to imitate a componentWillMount lifecycle event. Just do:
+```typescript jsx
+const Component = () => {
+   useMemo(() => {
+     // componentWillMount events
+   },[]);
+   useLayoutEffect(() => {
+     // componentWillMount events
+   },[]);
+   useEffect(() => {
+     // componentDidMount events
+     return () => {
+       // componentWillUnmount events
+     }
+   }, []);
+}
+```
+
+
+
+Simulate constructor in functional components using the useRef hook:
+```typescript jsx
+function Component(props) {
+    const willMount = useRef(true);
+    if (willMount.current) {
+        console.log('This runs only once before rendering the component.');
+        willMount.current = false;
+    }
+
+    return (<h1>Meow world!</h1>);
+}
+```
+
+
+
+`useLayoutEffect` - аналогично `useEffect`, но выполняется после того, как DOM готов к отрисовке, но перед самой отрисовкой
+https://ru.reactjs.org/docs/hooks-reference.html#uselayouteffect
+аналог:
+`showChild && <Child />` + `useEffect(() => { setShowChild(true); }, [])`
+
+
+
+
+`useCallback` is able to memorize a function.
+`useMemo` is able to memorize an object.
+
+`useCallback`:
+```typescript jsx
 const fn = useCallback(fn, deps);
 const memoiedCallback = useCallback( ()=>doSomething(a,b), [a,b] );
+```
 
 useCallback возвращает функцию-колбэк (мемоизированный колбэк), который создаётся заново,
 если поменялся хоть один параметр в массиве зависимостей.
 
-useCallback(fn, deps) — это эквивалент useMemo(() => fn, deps)
+`useCallback(fn, deps)` — это эквивалент useMemo(() => fn, deps)
 
-useMemo:
+`useMemo`:
+```typescript jsx
 const val = useMemo(fn, deps);
 const memoizedValue = useMemo( ()=>{return computeVal(a,b)}, [a,b] );
+```
 Возвращает результат переданной ему функции.
 При изменении зависимости значение вычисляется заново.
 
@@ -232,7 +236,7 @@ const memoizedValue = useMemo( ()=>{return computeVal(a,b)}, [a,b] );
 
 
 
-CONTEXT
+## Context
 Context provides a way to pass data through the component tree without having to pass props down
 manually at every level.
 
@@ -241,9 +245,11 @@ manually at every level.
 
 
 Перед перерендером реакт спрашивает компоненту, а нужно ли ей обновиться:
-    shouldComponentUpdate(nextProps, nextState, nextContext) {
-        return nextProps !== this.props || nextState != this.state
-    }
+```
+shouldComponentUpdate(nextProps, nextState, nextContext) {
+    return nextProps !== this.props || nextState != this.state
+}
+```
 Если унаследовать компоненту от PureComponent, то там эта проверка автоматически есть
 
 
@@ -252,19 +258,38 @@ manually at every level.
 
 
 
-Переадресация:
-<Navigate to="/login" />
 
-Программная переадресация:
-useNavigate:
+## Как работает React:
+JSX преобразовывается в `React.createElement(...)` и создаётся VirtualDOM.
+Потом на основе VirtualDOM создаётся/изменяется обычный DOM (`document.createElement(...)`)
 
-const useNavigate = ReactRouterDOM.useNavigate;
-Допустим, мы хотим выполнять переадресацию с адресов "/old" по пути "/new" - с компонента Old на компонент New. И, допустим, при переадресации необходимо передавать параметр id. Для этого в компоненте Old получаем функцию useNavigate:
+Сравнение нового и старого VirtualDOM - Это `Reconciliation` (Согласование).<br>
+Reconciliation работает на 2 предположениях:
+1) Два элемента с разными типами произведут разные деревья.
+2) Разработчик может указать, какие дочерние элементы могут оставаться стабильными между разными рендерами с помощью пропа `key`.
 
-const navigate = useNavigate();
-И затем по нажатию на кнопку вызываем эту функцию, передавая в нее путь перехода:
 
-<button onClick={async event => { navigate(`/new/${id}`); }}>Navigate</button>
+### Пример преобразования JSX в JS:
+Код
+```typescript jsx
+const ItKamasutra = (props) => <div>Hello</div>
+const ItIncubator = (props) => <div><ItKamasutra name='Dmitriy'/> </div>
+```
+будет преобразован в:
+```javascript
+"use strict";
+var ItKamasutra = function ItKamasutra(props) {
+    return React.createElement("div", null, "Hello");
+}
+var ItIncubator = function ItIncubator(props) {
+    return React.createElement(
+        "div", null, 
+        React.createElement(ItKamasutra, { name: "Dmitriy" } ),
+        " "
+    );
+}
+```
+
 
 
 

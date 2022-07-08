@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import ErrorBoundary from "./components/ErrorBoundary";
 import SvgTest from "./pages/SvgTest";
 import {typescriptTest} from "./EXAMPLES/TYPESCRIPT-TEST";
+import StateAndRefAndLocalReducerTest from "./pages/StateAndRefAndLocalReducerTest";
 
 const SocketIOChat = React.lazy(()=>import("./pages/SocketIOChat")) // React lazy
 const ThrowError = React.lazy(()=>import("./pages/ThrowError")) // React lazy
@@ -25,6 +26,7 @@ useEffect(()=>typescriptTest(),[])
                 <Route path="/samurai/login" element={<Login/>} />
                 <Route path="/samurai/profile" element={<Profile/>} />
                 <Route path="/svg-test" element={<SvgTest/>} />
+                <Route path="/state-and-ref-test" element={<StateAndRefAndLocalReducerTest/>} />
                 <Route path='*' element={<Navigate to='/landing'/>} />
             </Routes>
         </Suspense>
