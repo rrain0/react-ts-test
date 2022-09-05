@@ -18,9 +18,25 @@ const TestForwardedRefInput = () => {
         }, 3000)
     }
 
+    const programmaticallyFireChangeEvent = () => {
+        setInputValue(inputRef.current, 'event was programmatically fired')
+    }
+
     return <div>
-        <ForwardedRefInput ref={inputRef} hasError={false}/>
+        <ForwardedRefInput ref={inputRef} hasError={false} style={{ width: 300 }}/>
         <button onClick={selectAll}>Select All</button>
+        <button onClick={programmaticallyFireChangeEvent}>Programmatically Fire Change Event</button>
     </div>
 }
 export default React.memo(TestForwardedRefInput)
+
+
+
+const setInputValue = (input?: HTMLInputElement|null|undefined, newValue: string = '') => {
+    const valueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')!.set!
+    if (input){
+        valueSetter.call(input,newValue)
+        const ev = new Event('input', { bubbles: true })
+        input.dispatchEvent(ev)
+    }
+}

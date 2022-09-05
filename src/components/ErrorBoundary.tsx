@@ -2,7 +2,7 @@ import React from "react";
 import { NavigateFunction, useNavigate } from "react-router-dom";
 
 // React.Component<Props type, State type>
-class ErrorBoundaryClass extends React.Component<{ navigate: NavigateFunction, children: React.ReactNode },{ hasError: boolean }> {
+class ErrorBoundaryClass extends React.Component<{ navigate: NavigateFunction, children?: React.ReactNode },{ hasError: boolean }> {
 
     constructor(props) {
         super(props);
