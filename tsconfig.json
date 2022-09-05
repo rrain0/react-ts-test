@@ -1,43 +1,42 @@
 {
-    "compilerOptions": {
-        "target": "es6",
-        "lib": [
-            "dom",
-            "dom.iterable",
-            "esnext"
-        ],
-
-        // allow resolve src folder as module. You can use: import LoadingIc from "src/components/SvgIcons/LoadingIc"
-        "baseUrl":".",
-
-        "allowJs": true,
-        "skipLibCheck": true,
-        "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true,
-        "strict": true,
-        "downlevelIteration": true,
-        "noImplicitAny": false,
-        "noImplicitOverride": true,
-        "allowUnreachableCode": true,
-        "forceConsistentCasingInFileNames": true,
-        "noFallthroughCasesInSwitch": true,
-        "module": "esnext",
-        "moduleResolution": "node",
-        "resolveJsonModule": true,
-        "isolatedModules": true,
-        "noEmit": true,
-        "jsx": "react-jsx",
+  "compilerOptions": {
+    "target": "es6",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
 
 
-        /*"baseUrl": "./src",
-        "paths": {
-            "@ic*//*": ["./assets/icons*//*"],
+    "baseUrl":".", // allow resolve src folder as module. You can use: import LoadingIc from "src/components/SvgIcons/LoadingIc"
+
+    // doesn't work
+    /*"baseUrl": "./src",
+    "paths": {
+        "@ic*//*": ["./assets/icons*//*"],
             "@im*//*": ["./assets/images*//*"],
         },*/
 
-
-    },
-    "include": [
-        "src"
-    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "exactOptionalPropertyTypes": true, // ? means absence of property but not undefined
+    "downlevelIteration": true, // use ...iterator
+    "noImplicitAny": false, // нет неявных any
+    "noImplicitOverride": true, // при переопределении всегда надо указывать override
+    "allowUnreachableCode": true, // разрешить код после return, который никогда не выполнится
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+  },
+  "include": [
+    "src"
+  ]
 }

@@ -1,0 +1,15 @@
+
+
+
+
+div props:
+React.HTMLAttributes<HTMLDivElement>
+
+div props with ref:
+React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>
+
+styled components && - ссылка на текущий экземпляр компоненты
+
+onClick: React.MouseEventHandler<HTMLButtonElement>
+
+style: CSSProperties

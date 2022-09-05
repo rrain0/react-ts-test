@@ -61,6 +61,7 @@ const SocketIOChat = () => {
         }
     },[])
 
+    if (!ws) return <></>
 
     return <ChatContext.Provider value={{webSocket: ws, isWebSocketOpen: wsOpen}}>
         <div>

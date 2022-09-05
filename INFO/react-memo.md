@@ -4,6 +4,8 @@ https://reactjs.org/docs/react-api.html#reactmemo
 
 Это аналог использования React.PureComponent вместо React.Component у классовых компонент.
 По умолчанию метод shouldComponentUpdate() всегда возвращает true и компонента ререндерится и потом сравнивается VDOM.
+Но в shouldComponentUpdate(nextProps, nextState) можно сравнить текущий стейт с новым, 
+поступившим как параметр в shouldComponentUpdate() и решить, нужно ли обновлять компоненту.
 Если включена мемоизация, то в shouldComponentUpdate() просходит shallow comparsion of props.
 Выбор здесь такой - сравнивать отрендеренное дерево (VirtualDOM) или перед этим просто сравнить пропсы.
 Скорее всего проще будет сравнить пропсы.

@@ -94,6 +94,7 @@ import { Routes, Route } from "react-router-dom";
 ```
 
 ## Get URL Route Params
+```/anypath/:param/anypath```
 ```typescript jsx
 import { useParams } from "react-router-dom";
 

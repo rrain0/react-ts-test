@@ -18,6 +18,7 @@ import scss from '..../scss-style.module.scss'
 
 <div className={css.styleClassName} />
 <div className={scss.styleClassName} />
+<div className={scss.['style-class-name']} />
 ```
 !!! классы в стилях теперь называть в camelcase т.к. дефис запрещён в имени переменных js
 

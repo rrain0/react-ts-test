@@ -19,7 +19,7 @@ const Login = () => {
 
     return <div>
         <div><input value={login} onInput={onLoginInput}/></div>
-        <div><input type='password'value={pwd} onInput={onPwdInput}/></div>
+        <div><input type='password' value={pwd} onInput={onPwdInput}/></div>
         <div><button onClick={logIn}>Login!!!</button></div>
     </div>
 }

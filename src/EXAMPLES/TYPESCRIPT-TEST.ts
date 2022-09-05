@@ -39,13 +39,12 @@ function getOne(): number { return 1 }
 
 
 export function typescriptTest(){
-
-
     typesTest()
     genericTest()
     arraysTest()
     tupleTest()
     keyofTest()
+    indexedTypes()
     conditionalTypesTest()
     mappedTypesTest()
     readonlyOptionalConstTest()
@@ -56,6 +55,10 @@ export function typescriptTest(){
     classTest()
     functionsTest()
     functionParametersTest()
+    promiseTypes()
+    templateStringTypesAsDiscriminants()
+    imports()
+    privateFieldPresenceChecks()
 }
 
 export function typesTest() {
@@ -86,7 +89,7 @@ export function typesTest() {
 
     // null и undefined - субтипы - могут быть присвоены любому другому типу (только не в строгом режиме, там это самостоятельные типы)
 
-    // unknown - неизвестный тип - с ним ничего нельзя сделать, пока не приведём к лругому типу
+    // unknown - неизвестный тип - с ним ничего нельзя сделать, пока не приведём к другому типу
     let a7: unknown = 10
     let a7_1: number = a7 as number + 89
     console.log(a7_1)
@@ -97,8 +100,20 @@ export function typesTest() {
     */
 
     // any - любой тип
+    // any - такой же, как и unknown, только его не надо приводить, чтобы что-то сделать
     let a9: any = 89
     a9 = "89"
+
+
+    // declare a literal
+    {
+        const stringLiteral: 'test' = 'test'
+        const numberLiteral: 5 = 5
+        // allow only 'const' or 'readonly static' and 'Symbol()' or 'Symbol.for()'
+        // use 'typeof' to reference it
+        const symbolLiteral: unique symbol = Symbol()
+    }
+
 
     // автовывод типа
     let a10 = 89
@@ -420,6 +435,28 @@ export function keyofTest() {
     // keyof Map
     type Mapish = { [k: string]: boolean };
     type M = keyof Mapish;
+}
+
+
+export function indexedTypes(){
+    interface StringIndexed{
+        // string also implies string|number because number converts to string
+        [index: string]: any
+    }
+    interface StringTemplateIndexed{
+        [index: `data-${string}`]: boolean
+    }
+    interface SymbolOrNumberIndexed{
+        [index: symbol|number]: string
+    }
+    // аналогично примеру выше используя union types
+    interface NumberOrStringTemplateIndexed{
+        [index: number]: string
+        [index: `data-${string}`]: boolean
+    }
+
+    let a: StringIndexed = { 5: 5, "6": 5 }
+    let b: NumberOrStringTemplateIndexed = { 6: "6", 'data-some-prop': true }
 }
 
 
@@ -903,7 +940,7 @@ export function classTest() {
 
     // static
     class Foo {
-        static #count = 0; // static field
+        static #count = 0; // static (private) field
         static get staticCount() { return Foo.#count } // static getter
         static set staticCount(count) { Foo.#count = count } // static setter
         get count() { return Foo.#count } // getter from private static
@@ -1016,6 +1053,7 @@ export function functionsTest(){
     const getNumber = num.getNumber
     //let n = getNumber() // error: The 'this' context of type 'void' is not assignable to method's 'this' of type 'Num'.
 
+
 }
 
 export function functionParametersTest(){
@@ -1049,4 +1087,77 @@ export function functionParametersTest(){
     printMsg({message: "message from object", prop: "prop"} as {message: string})
 }
 
+export function promiseTypes(){
 
+    // Awaited type
+    type A = Awaited<Promise<string>>; // A = string
+    type B = Awaited<Promise<Promise<number>>>; // B = number
+    type C = Awaited<boolean | Promise<number> | PromiseLike<string>>; // C = boolean | number | string
+    let c: C
+    c = true // ok
+    c = 5 // ok
+    c = "str" // ok
+    //c = undefined // error
+
+}
+
+export function templateStringTypesAsDiscriminants(){
+    interface Success {
+        type: `${string}Success`;
+        body: string;
+    }
+    interface Error {
+        type: `${string}Error`;
+        message: string
+    }
+    function handler(r: Success | Error) {
+        if (r.type === "HttpSuccess") {
+            const token = r.body; // r is Success
+        }
+    }
+}
+
+export async function imports(){
+
+    // Importing types
+    /*
+    import type { BaseType } from "./some-module.js";
+    import { someFunc, type BaseType } from "./some-module.js";
+
+    // importing of types will be erased in compiled javascript
+
+    export class Thing implements BaseType {
+        someMethod() {
+            someFunc();
+        }
+    }
+     */
+
+
+
+    // Assert type of import
+    // import obj from "./something.json" assert { type: "json" };
+    // In Dynamic import:
+    // const obj = await import("./something.json", {  assert: { type: "json" } });
+
+}
+
+export function privateFieldPresenceChecks(){
+    /*
+    One interesting aspect of this feature is that the check #name in other implies
+    that other must have been constructed as a Person,
+    since there’s no other way that field could be present.
+     */
+    class Person {
+        #name: string;
+        constructor(name: string) {
+            this.#name = name;
+        }
+        equals(other: unknown) {
+            return other &&
+                typeof other === "object" &&
+                #name in other && // <- this is new! // After this type of other is narrowed to Person
+                this.#name === other.#name;
+        }
+    }
+}
