@@ -8,10 +8,11 @@ import HtmlXmlParsing from "./pages/HtmlXmlParsing";
 import StyledComponents from "./pages/StyledComponents/StyledComponents";
 import TestForwardedRefInput from "./pages/forward-ref/forward-ref-full-example-input/TestForwardedRefInput";
 import ComponentWithExpandableContent from "./components/ComponentWithExpandableContent";
+import TestForwardRefButton from "./pages/forward-ref/forward-ref-simple-button/TestForwardRefButton";
 
 const SocketIOChat = React.lazy(()=>import("./pages/SocketIOChat")) // React lazy
 const ThrowError = React.lazy(()=>import("./pages/ThrowError")) // React lazy
-const Landing = React.lazy(()=>import("./pages/Landing")) // React lazy
+const Landing = React.lazy(()=>import("./pages/Landing/Landing")) // React lazy
 const Login = React.lazy(()=>import("./pages/Login")) // React lazy
 const Profile = React.lazy(()=>import("./pages/Profile")) // React lazy
 
@@ -33,7 +34,10 @@ useEffect(()=>typescriptTest(),[])
                 <Route path="/state-and-ref-test" element={<StateAndRefAndLocalReducerTest/>} />
                 <Route path="/html-xml-parsing" element={<HtmlXmlParsing/>} />
                 <Route path="/styled-components" element={<StyledComponents/>} />
-                <Route path="/forward-ref" element={<TestForwardedRefInput/>} />
+                <Route path="/forward-ref">
+                    <Route path='input' element={<TestForwardedRefInput/>} />
+                    <Route path='button' element={<TestForwardRefButton/>} />
+                </Route>
                 <Route path="/test-expandable" element={<ComponentWithExpandableContent/>} />
                 <Route path='*' element={<Navigate to='/landing'/>} />
             </Routes>
