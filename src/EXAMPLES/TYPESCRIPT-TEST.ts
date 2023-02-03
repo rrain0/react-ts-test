@@ -38,6 +38,56 @@ function getOne(): number { return 1 }
 
 
 
+function ffsafadsf(){
+    const enum Resources {
+        supp = 'supp',
+        dema = 'dema'
+    }
+    type supplier = {
+        id: number
+        name: string
+    }
+
+    type demat = {
+        id : number
+        name: string
+        agentName: string
+    }
+
+    {
+        // first solution
+        interface ResourceToValue {
+            [Resources.supp]: supplier[]
+            [Resources.dema]: demat[]
+        }
+        const response: ResourceToValue = { } as ResourceToValue
+        response[Resources.supp] = [{id:1, name: 'a'}]
+        const supplierData = response[Resources.supp] // type is supplier[]
+    }
+    {
+        // second solution
+        interface ResourceToValue {
+            [Resources.supp]: supplier[]
+            [Resources.dema]: demat[]
+        }
+        interface CustomMap<T> extends Map<keyof T,T[keyof T]> {
+            get<Key extends keyof T>(key: Key): T[Key]
+            set<Key extends keyof T>(key: Key, value: T[Key]): this
+
+            // you also can override types of other methods
+        }
+
+        const response = new Map() as CustomMap<ResourceToValue>
+
+        response.set(Resources.supp, [{id:1, name: 'a'}])
+
+        const supplierData = response.get(Resources.supp) // type is supplier[]
+    }
+
+}
+
+
+
 export function typescriptTest(){
     typesTest()
     genericTest()
@@ -48,33 +98,119 @@ export function typescriptTest(){
     conditionalTypesTest()
     mappedTypesTest()
     readonlyOptionalConstTest()
-    enumTest()
     interfaceTest()
     discriminatoryAssociationTest()
     constructorInInterfaceTest()
-    classTest()
     functionsTest()
     functionParametersTest()
     promiseTypes()
     templateStringTypesAsDiscriminants()
     imports()
     privateFieldPresenceChecks()
+    declarations()
 }
 
 export function typesTest() {
 
-    // Поведение типов boolean, string, number, symbol идентично джаваскриптовскому
-    let a0: boolean | string | number | symbol = 4
+    // Поведение типов boolean, string, number, symbol, bigint идентично джаваскриптовскому
+    /*
+        Примитивные типы:
+            number
+            string
+            boolean
+            symbol
+            bigint
+     */
+    let a0: boolean | string | number | symbol | bigint
+    a0 = true
+    a0 = 'str'
+    a0 = 4
+    a0 = Symbol('tag')
+
+    /*
+        Типы-значения и специальные:
+        null        - null primitive value
+        undefined   - undefined primitive value
+        object
+        Object
+        {}          - any non-null & non-undefined value
+        []          - array
+        Array       - array
+        [<type>]    - tuple
+        any
+        unknown
+        {} | null | undefined       - any value
+        never       - means that field/place for value is exists, but no value can be provided
+        ?           - optional - means that field/place for value may not exist
+        ...<type>   - vararg / destructuring
+        void
+        Function
+        Awaited     - operation 'await' for type: Awaited<string> is same as Awaited<Promise<string>>
+     */
+
+    {
+        /*
+            Обёртки примитивов:
+                number Number
+                string String
+                boolean Boolean
+                symbol Symbol
+                bigint BigInt
+         */
+
+        let n: number = 10;
+        n = Number('10') // alias id +<value>
+        let N: Number = new Number('10')
+        //n = N // not allowed
+        N = n // number -> Number allowed
+
+        let s: string = 'str'
+        s = String('str') // alias is ''+<value> or <value>+''
+        let S: String = new String('str')
+        //s = S // not allowed
+        S = s // string -> String allowed
+
+        let b: boolean = true
+        b = Boolean('') // alias is !!<value>
+        let B: Boolean = new Boolean('str')
+        //b = B // not allowed
+        B = b // boolean -> Boolean allowed
+
+        // you cannot invoke Symbol constructor via 'new'
+        let sym: symbol = Symbol('tag')
+        sym = Symbol.for('key') // symbol from global registry
+        let Sym: Symbol = Symbol('tag')
+        //sym = Sym // not allowed
+        Sym = sym // symbol -> Symbol allowed
+
+        // you cannot invoke BigInt constructor via 'new'
+        let bi: bigint = 123n
+        bi = BigInt('123')
+        let BI: BigInt = 1n
+        //bi = BI // not allowed
+        BI = bi // bigint -> BigInt allowed
+    }
 
     let a1: number = 10
     //a1 = "some string" // нельзя
 
-    // | - объединение типов - должны присутствовать свойства одного из типов
-    let a2: string | number = "10" // это тип объединения => Union Type
-    a2 = 10
+    {
+        // | - union type - объединение типов - тип значения должен удовлетворять одному из типов объединения
+        let a: string | number = "10"
+        a = 10
 
-    let a3: boolean | null // переменная не может быть использована до присваивания + undefined нельзя присвоить
-    a3 = null
+        let b: boolean | null // переменная не может быть использована до присваивания + undefined нельзя присвоить
+        b = null
+    }
+
+    {
+        // & - intersection type - пересечение типов - тип значения должен удовлетворять сразу всем типам пересечения
+        type Obj1 = { id: string, prop: string }
+        type Obj2 = { prop: string, name: string }
+        let obj: Obj1 & Obj2 = { id: 'id', prop: 'p', name: 'name' }
+
+        type Never = null & {} // results in 'never' - no intersections
+    }
 
     let a4: undefined
     console.log(a4) // автоматически undefined
@@ -87,43 +223,64 @@ export function typesTest() {
     let a6: null
     //console.log(a6) // нельзя - TS2454: Variable 'a6' is used before being assigned.
 
-    // null и undefined - субтипы - могут быть присвоены любому другому типу (только не в строгом режиме, там это самостоятельные типы)
 
-    // unknown - неизвестный тип - с ним ничего нельзя сделать, пока не приведём к другому типу
-    let a7: unknown = 10
-    let a7_1: number = a7 as number + 89
-    console.log(a7_1)
-    /*
-    let a7_1: string = a7 as string + 89
-    console.log(a7_1)
-    console.log(typeof a7_1) // => number - тайпскрипт сломан с помощью unknown :)
-    */
-
-    // any - любой тип
-    // any - такой же, как и unknown, только его не надо приводить, чтобы что-то сделать
-    let a9: any = 89
-    a9 = "89"
-
-
-    // declare a literal
     {
+        // unknown - неизвестный тип - с ним ничего нельзя сделать, пока не приведём к другому типу
+        // "anything in, nothing out"
+        // unknown is a supertype of every other type.
+        // переменной с типом unknown можно присвоить любое значение
+        // unknown is close in spirit to the union type {}|null|undefined because it accepts null, undefined, and any other type.
+        // операции с unknown (| &) приводят к unknown (в отличие от {}|null|undefined)
+        let a: unknown = 10
+        let b: number = a as number + 89
+        console.log(b)
+        /*
+            let b: string = a as string + 89
+            console.log(b)
+            console.log(typeof b) // => number - тайпскрипт сломан с помощью unknown :)
+        */
+
+        let c: unknown
+        let d = 10
+        c = d
+        let e: {}|null|undefined
+        e = c
+    }
+
+    {
+        // any - любой тип
+        // any - такой же, как и unknown, только его не надо приводить, чтобы что-то сделать
+        // операции с any (| &) приводят к any
+        let a: any = 89
+        a = "89"
+    }
+
+
+    {
+        // Declare a literal
         const stringLiteral: 'test' = 'test'
         const numberLiteral: 5 = 5
-        // allow only 'const' or 'readonly static' and 'Symbol()' or 'Symbol.for()'
+        // Symbol literals allow only 'const' or 'readonly static' modifier and value from 'Symbol()' or 'Symbol.for()' methods
         // use 'typeof' to reference it
         const symbolLiteral: unique symbol = Symbol()
     }
 
 
     // автовывод типа
-    let a10 = 89
+    let a10 = 89 // a10 is number
 
     {
         // ! - non-null assertion
         // assert that it is not null & not undefined
-        let a: null|undefined|{ prop: string } = { prop: "flkldsf" }
-        const getA = () => ({ prop: "flkldsf" }) as null|undefined|{ prop: string }
+        let a: null|undefined|{ prop: string } = { prop: "p" }
+        const getA = () => ({ prop: "p" }) as null|undefined|{ prop: string }
         let prop = getA()!.prop
+
+        // ?? - give default value if current value is null|undefined
+        a = null
+        a = a ?? { prop: "p" }
+        // или кратко ??=
+        a ??= { prop: "p" }
     }
 
 
@@ -221,12 +378,7 @@ export function typesTest() {
         age: 67
     }
 
-    let GET_TASKS = "APP/GetTasks"
-    type GetTasksActionType = {
-        id: number,
-        type: typeof GET_TASKS // вместо type: "APP/GetTasks"
-    }
-
+    class MyClass {}
 
     // тип object | Object | {} - любой не примитив - не number | string | boolean | symbol | null | undefined
     // тип включает в себя все JavaScript объекты - предосталяет встроенные методы
@@ -245,39 +397,146 @@ export function typesTest() {
     let a17: {prop: any} = {prop: 6} // теперь можно использовать только указанные свойства (prop)
 
     {
-        // Object это:
-        //interface Object {
-        // ...
-
-        /** Returns a string representation of an object. */
-        //toString(): string;
-
-        /** Returns a date converted to a string using the current locale. */
-        //toLocaleString(): string;
-
-        /** Returns the primitive value of the specified object. */
-        //valueOf(): Object;
-
-        /**
-         * Determines whether an object has a property with the specified name.
-         * @param v A property name.
-         */
-        //hasOwnProperty(v: string): boolean;
-
-        /**
-         * Determines whether an object exists in another object's prototype chain.
-         * @param v Another object whose prototype chain is to be checked.
-         */
-        //isPrototypeOf(v: Object): boolean;
-
-        /**
-         * Determines whether a specified property is enumerable.
-         * @param v A property name.
-         */
-        //propertyIsEnumerable(v: string): boolean;
-        //}
+        // {} - любое непустое значение (т.е. не null|undefined)
+        let v: {}
+        v = 8
+        v = 'string'
+        v = true
+        v = Symbol()
+        v = {}
+        v = { prop: 'p' }
+        v = new String('s')
+        v = { toString: ()=>2 } // implicit override: toString вовращает число
+        v = new MyClass()
+        v = ()=>{}
+        //v = null        // not allowed
+        //v = undefined   // not allowed
     }
+    {
+        // Object - любое непустое значение (т.е. не null|undefined) с предопределёнными свойствами:
+        // constructor: Function; toString(): string; toLocaleString(): string; valueOf(): Object;
+        // hasOwnProperty(v: PropertyKey): boolean; isPrototypeOf(v: Object): boolean; propertyIsEnumerable(v: PropertyKey): boolean;
+        let o: Object
+        o = 8
+        o = 'string'
+        o = true
+        o = Symbol()
+        o = {}
+        o = { prop: 'p' }
+        o = new String('s')
+        //o = { toString: ()=>2 } // implicit override: toString вовращает число // not allowed
+        o = new MyClass()
+        o = ()=>{}
+        //o = null        // not allowed
+        //o = undefined   // not allowed
+    }
+    {
+        // object - любой объект, не примитив
+        let o: object
+        //o = 8           // not allowed
+        //o = 'string'    // not allowed
+        //o = true        // not allowed
+        //o = Symbol()    // not allowed
+        o = {}
+        o = { prop: 'p' }
+        o = new String('s')
+        o = { toString: ()=>2 } // implicit override: toString вовращает число
+        o = new MyClass()
+        o = ()=>{}
+        //o = null        // not allowed
+        //o = undefined   // not allowed
+    }
+    {
+        // {} | null | undefined - похож на any или unknown, но выражает любое КОНКРЕТНОЕ значение
+        // Операции по изменению типа работают как и предполагается
+        let o = {} as Exclude<{}|null|undefined, undefined> // остался тип {}|null
 
+        // Non-null type
+        // If T===null (or undefined) then NonNull is never
+        // Else NonNull becomes T without null (and undefined)
+        type NonNull<T> = T & {}
+        type ObjOrNull = object|null
+        type Obj = NonNull<ObjOrNull> // result type is object
+    }
+    {
+        // ? - тип, обозначающие отсутсвие поля в контейнере (объекте или массиве или аргументах функции)
+        // Имеет смысл если в tsconfig.json есть "exactOptionalPropertyTypes": true
+        // Возвращаемое значение у отсутсвующего поля = undefined
+        // Поле которое есть и хранит undefined и поле которого вообще нет отличаются тем,
+        // что при переборе свойств у объекта (for..in) или при переборе всех элементов массива (map, forEach) поле значением undefined будет присутвовать всё равно
+        let obj: {
+            prop: string,
+            optionalProp?: string, // или свойства нет или оно хранит строку
+            neverProp?: never // свойства которого не может быть, можно испоьзовать чтобы исключить что-нибудь из другого типа
+        }
+        obj = { prop: 'string' }
+        obj = { prop: 'string', optionalProp: 'string' }
+        //delete obj.prop // not allowed
+        delete obj.optionalProp
+
+        let tuple: [never?, string?, number?]
+        tuple = []
+        tuple = [,,,]
+        //tuple = [,,,,] // not allowed
+        tuple = [, 'str', 10]
+        tuple = [, , 10]
+    }
+    {
+        // Arrays
+        let numbers: number[] // any count of number items
+        numbers = []
+        numbers = [1]
+        // numbers = ['str1'] // not allowed
+        numbers = [1,2,3,4,5]
+
+        let numbers2: Array<number>
+        numbers2 = []
+        numbers2 = [1]
+        // numbers2 = ['str1'] // not allowed
+        numbers2 = [1,2,3,4,5]
+
+        let numbersOrStrings: (number|string)[] // any count of number|string items
+        numbersOrStrings = []
+        numbersOrStrings = [1]
+        numbersOrStrings = ['str1']
+        // numbersOrStrings = [true] // not allowed
+        numbersOrStrings = [1,'str2',3,'str4',5]
+
+        let withFirstElem: [(number|boolean), ...(number|boolean)[]]
+        // withFirstElem = [] // not allowed
+        withFirstElem = [1]
+        //withFirstElem = ['str1'] // not allowed
+        withFirstElem = [false]
+        withFirstElem = [1,true,3,false,5]
+
+        let withFirstElem2: string[] & { 0: string }
+        //withFirstElem2 = [] // not allowed
+        withFirstElem2 = ['0','1','2']
+
+        let withFirstElem3: Exclude<string[], []>
+        //withFirstElem2 = [] // not allowed
+        withFirstElem2 = ['0','1','2']
+    }
+    {
+        // void - "пустое" значение - значение, которое, предполагается, что никогда не будет прочитано
+        // void похож на unknown
+        // void is a special type. under normal circumstances, it is only a supertype of undefined
+        // Обычно используется в функциях для обозначения того, что она ничего не возвращает и в дженериках, обозначая отсутсвие типа
+        let f = (): void => {} // функция, которая ничего не возвращает (по факту возвращает undefined), но слово return можно опустить
+        ;(function(): void {})()
+        let a: void = undefined
+        // a = 1 // not allowed
+        //let b: undefined = a // not allowed
+        let c: {}|null|undefined = a
+        let p: Promise<void> = new Promise(v=>{})
+        let arr: Array<void> = [undefined, undefined]
+        let arrOf0: void = arr[0]
+    }
+    {
+        // never - обозначает, что дело до присвоения значения чего-либо с данным типом никогда не дойдёт
+        let f: ()=>never = ()=>{ throw new Error('error') } // функция не может закончиться нормально, т.к. кидает исключение
+        f = ()=>{ while(true); } // функция не может закончиться нормально, т.к. бесконечный цикл
+    }
 
     // Тип void - обозначает, что функция ничего не возвращает
     function printMsg(msg: string): void {
@@ -387,6 +646,45 @@ export function genericTest() {
         setFound(objsToSearchIn)
     }
 
+
+    {
+        /*
+            Type variance:
+            ● <T> - no explicit variance - auto detection of variance
+            ● <in T> - covariance - parameter only for read from it (in = input parameter)
+                       You can use T or its parents.
+            ● <out T> - contravariance - parameter only for write into it (out = output parameter)
+                        You can use T or its children.
+            ● <in out T> - invariance - parameter for read & write
+                           You can use only T.
+            You shouldn't explicitly specify variance everywhere!!!
+        */
+        interface Animal { animalStuff: any }
+        interface Dog extends Animal { dogStuff: any }
+        type Getter<out T> = ()=>T // T is output parameter - write into T and out
+        type Setter<in T> = (value: T)=>void // T is input parameter - in and read from T
+        interface State<in out T> {
+            get: ()=>T
+            set: (value: T)=>void
+        }
+
+        let getterAnimal: Getter<Animal> = function (this: Animal){ return this }
+        let getterDog: Getter<Dog> = function (this: Dog){ return this }
+        let setterAnimal: Setter<Animal> = function (this: Animal, animal: Animal){  }
+        let setterDog: Setter<Dog> = function (this: Dog, dog: Dog){  }
+
+        const ga: Getter<Animal> = getterDog
+        //const gd: Getter<Dog> = getterAnimal // error
+        //const sa: Setter<Animal> = setterDog // error
+        const sd: Setter<Dog> = setterAnimal
+
+        const state: { internalDog: Dog } & State<Dog> = {
+            internalDog: { animalStuff: 'as', dogStuff: 'ds' },
+            get: ()=>({ animalStuff: 'bbb', dogStuff: 'aaa' }),
+            set(v){ this.internalDog = v },
+        }
+        const dog = state.get()
+    }
 }
 
 export function arraysTest(): void {
@@ -402,8 +700,9 @@ export function arraysTest(): void {
     console.log(arr)
 }
 
+
 export function tupleTest(): void {
-    // Кортежи
+    // Кортеж - массив, в котором каждый элемент имеет свой тип
     const tuple1: [number, string, boolean] = [1234, "str", false]
     const tuple2: [number, string[], undefined, {}] = [1234, ["str"], undefined, {prop: 3}]
 
@@ -414,6 +713,20 @@ export function tupleTest(): void {
     const a1: number = tuple1[0];
     const a2: string = tuple1[1];
     const a3: number | string | boolean = tuple1[2]
+
+
+    // readonly tuple
+    const readonlyTuple: readonly [string, boolean, number] = ['str', true, 2]
+    // readonlyTuple[0] = 'another str' // error
+    // readonlyTuple.length = 5 // error
+
+    {
+        // using empty slots in tuples
+        const someTuple1 = [1, 'str', , , true] as const // type is: readonly [1, "str", never?, never?, true?]
+        const someTuple2: [number, never?, string?] = [1, , 'str']
+        // empty slots in usual array
+        const array: (string|undefined)[] = ['str1', , 'str2']
+    }
 }
 
 
@@ -510,6 +823,32 @@ export function conditionalTypesTest(){
 
     type ToArrayNonDist<Type> = [Type] extends [any] ? Type[] : never;
     type StrArrOrNumArrNotDist = ToArrayNonDist<string | number>; // type StrArrOrNumArr = (string | number)[]
+
+
+
+
+    {
+        // ts4.7 extends Constraints on infer Type Variables
+
+        // Вернуть тип строки первого элемента, если это строка, иначе never:
+        type FirstIfString1<T> = T extends [infer S, ...unknown[]]
+            ? S extends string ? S : never
+            : never
+
+        type FirstIfString2<T> = T extends [string, ...unknown[]]
+            ? T[0]
+            : never
+
+        type FirstIfString3<T> = T extends [infer S extends string, ...unknown[]]
+            ? S
+            : never
+
+        type A = FirstIfString3<[string, number, number]> // A is string
+        type B = FirstIfString3<['hello', number, number]> // B is 'hello'
+        type C = FirstIfString3<['hello'|'world', boolean]> // C is 'hello'|'world'
+        type D = FirstIfString3<[boolean, string, string]> // D is never
+        type E = FirstIfString3<[number|string, ...string[]]> // E is never
+    }
 }
 
 
@@ -607,6 +946,10 @@ export function mappedTypesTest() {
 
 }
 
+
+
+
+
 export function readonlyOptionalConstTest(){
     // readonly can be applied in type or class but not in object literal or array literal
     type PointType = {
@@ -668,49 +1011,6 @@ export function conditionalTypes(){
 
 
 
-export function enumTest(){
-    enum Days {Mon, Tue, Wed, Thu, Fri, Sat, Sun}
-    const sun: string = Days[6] // Sun
-    const one: number = Days["Tue"] // 1
-    const tue: number = Days.Tue
-    const fri: Days = Days.Fri
-    const thu: Days = 3
-    const idxByEnumValue: number = Days.Sat.valueOf() // 5
-
-    console.log(Days)
-    console.log(sun) // => Sun
-    console.log(one) // => 1 - (as number)
-    console.log(tue) // => 1 - (as number)
-    console.log(tue === Days.Tue) // => true
-    console.log(tue === 1) // => true
-    console.log(fri === 4) // => true
-    console.log("idxByEnumValue: "+idxByEnumValue) // => 5
-
-    // порядок продолжается от текущего числа если явно присвоить индекс
-    enum Days2 {Mon, Tue, Wed=9, Thu, Fri, Sat, Sun}
-    let value: string  = Days2[4] // undefined - хотя тип undefined явно не указан, но ошибки не будет
-
-    console.log(Days2)
-    console.log(value) // => undefined - (as undefined)
-
-    value+="jjj"
-    console.log(value) // => undefinedjjj - (as string)
-
-
-    enum Directions {Up, Down, Left, Right}
-    console.log(Directions) // => {0: 'Up', 1: 'Down', 2: 'Left', 3: 'Right', Up: 0, Down: 1, Left: 2, Right: 3} (as object)
-    console.log(Directions.Up) // => 0 (as number)
-    console.log(Directions["Up"]) // => 0 (as number)
-    console.log(Directions[0]) // => Up (as string)
-
-    const f = (d: Directions)=>{
-        console.log(d)
-        console.log(Directions[d])
-        console.log()
-    }
-    f(Directions.Down)
-    f(1)
-}
 
 export function interfaceTest(){
     // Интерфейсы
@@ -771,6 +1071,14 @@ export function interfaceTest(){
     // можно расширить приемлемые типы: string => string | number
     // имена параметров необязательно совпадают - главное совпадение типов
     let fun1: FunctionalInterface = function (s1: string, s2: string | number){ return s1+s2 }
+
+    // Определение вызова через new или просто вызова
+    // Т.е. вызов как конструктора или просто вызов как обычной функции
+    // С помощью new() нужно типизировать функции-конструкторы вместо class
+    interface CallOrConstruct {
+        new (s: string): Date; // new CallOrConstruct('2022-05-05')
+        (n?: number): number; // CallOrConstruct(2022)
+    }
 
     // интерфейс является и функцией и объектом
     interface Counter {
@@ -909,135 +1217,6 @@ export function constructorInInterfaceTest() {
 }
 
 
-export function classTest() {
-    // public protected private
-    class Person {
-        public name: string // ● public => accessible anywhere
-        age: number // default is public
-
-        // Derived class can increase visibility of protected
-        protected readonly sex: "male" | "female" // ● protected => accessible in class code and from inheritors
-
-        private job: string // ● private => accessible only in class code
-        #hardPrivate = 0 // JavaScript ● hard private field (starts with "#") for ES2021+
-
-        constructor(name: string, age: number, sex: "male" | "female", job: string) {
-            this.name = name;
-            this.age = age;
-            this.sex = sex;
-            this.job = job;
-        }
-    }
-
-
-    // readonly
-    class ReadOnly {
-        readonly a
-        private readonly b
-    }
-    const ro1 = new ReadOnly()
-    const ro2 = new ReadOnly // you can omit () if zero arguments
-
-    // static
-    class Foo {
-        static #count = 0; // static (private) field
-        static get staticCount() { return Foo.#count } // static getter
-        static set staticCount(count) { Foo.#count = count } // static setter
-        get count() { return Foo.#count } // getter from private static
-        static { // static block
-            try {
-                const lastInstances = []
-                Foo.#count += lastInstances.length;
-            }
-            catch {}
-        }
-    }
-
-
-    // Parameter properties - объявление переменных в конструкторе
-    // to make parameter to be property - place public / protected / private / readonly before parameter
-    class Triangle {
-        constructor(private a: number, protected readonly b: number, private c: number) {
-            this.a = a<=0 ? 10 : a;
-            // остальные просто присвоятся
-        }
-    }
-    let tri: Triangle = new Triangle(-140, 3, 4)
-    console.log(tri) // => Triangle{a: 10, b: 3, c: 4}
-
-    // интерфейс наследует класс - включает все члены класса со всеми модификаторами, но не их реализации
-    // если в суперклассе были private или protected поля, то только наследники этого суперкласса смогут реализовать интерфейс
-    interface Quadrangle extends Triangle {
-        d: number
-    }
-
-    // this type means class type
-    // fun(a: this): this {...}
-    // isSomething(): this is Something { return this instanceof Something }
-    class StringBuilder {
-        s = ""
-        append(s: string): this { // this means StringBuilder type
-            this.s += s
-            return this
-        }
-        isStringBuilder(): this is StringBuilder{
-            return this instanceof StringBuilder
-        }
-    }
-
-    class IndexSignature {
-        [s: string]: boolean | ((s: string) => boolean);
-
-        check(s: string) {
-            return this[s] as boolean;
-        }
-    }
-
-    // make it lateinit with "!"
-    class LateInit {
-        lateinitProperty!: string
-    }
-
-
-    // Narrowing type of super class
-    class BaseClassWithCommonType{
-        n: number|string = 9
-    }
-    // DECLARE
-    //class DerivedClassWithMoreSpecificType extends BaseClassWithCommonType{
-    //    declare n: number // doesn't emit any javascript code
-    //}
-
-
-    // abstract class
-    abstract class BaseAbstract {
-        abstract field
-        abstract method()
-    }
-    class DerivedFromBase extends BaseAbstract {
-        field = 0
-        method() { }
-    }
-    // класс есть ссылка на функцию-конструктор этого класса
-    function createBaseInstance(ctor: new () => BaseAbstract){
-        const instance = new ctor()
-        return instance
-    }
-    let ba: BaseAbstract = createBaseInstance(DerivedFromBase)
-    //ba = createBaseInstance(BaseAbstract) // error because abstract
-
-
-    class Control { private state: any }
-    interface SelecetableControl extends Control { select(): void }
-    class Button extends Control { select(){} }
-    class TextBox { select(){} }
-    class Image { select(){}; private state: any}
-
-    let selectableControl: SelecetableControl;
-    selectableControl = new Button();
-    //selectableControl = new TextBox(); // нельзя - нет свойства private state
-    //selectableControl = new Image(); // нельзя - separate declarations of private state
-}
 
 export function functionsTest(){
 
@@ -1160,4 +1339,19 @@ export function privateFieldPresenceChecks(){
                 this.#name === other.#name;
         }
     }
+}
+
+
+
+export function declarations() {
+    /*
+        // DECLARE GLOBAL
+
+        declare global {
+          function foo(): void;
+        }
+
+        globalThis.foo = () => {};
+
+     */
 }

@@ -35,7 +35,8 @@ const Border = React.memo(styled.div`
   pointer-events: none;
   border: 2px dashed #1F8DCD;
   border-radius: 4px;
-
+  
+  // && - ссылка на текущий экземпляр компоненты (здесь это текущий экземпляр Border)
   ${Frame}:focus && {
     border: 4px solid #1F8DCD;
   }

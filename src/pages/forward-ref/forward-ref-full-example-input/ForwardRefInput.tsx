@@ -6,15 +6,18 @@ import useForwardedRef from "./useForwardedRef";
 // Ref is function(current) or object{ current }
 
 
+// component props
 type ForwardedRefInputProps = JSX.IntrinsicElements['input'] & {
     hasError?: boolean|undefined
 }
+// custom ref props
 type ForwardedRefInputRefCustomProps = {
     selectAll: ()=>void
 }
+// ref props
 type ForwardedRefInputElement = HTMLInputElement & ForwardedRefInputRefCustomProps
 
-const ForwardedRefInput = React.forwardRef<ForwardedRefInputElement, ForwardedRefInputProps>(
+let ForwardRefInput = React.forwardRef<ForwardedRefInputElement, ForwardedRefInputProps>(
     ( { hasError, ...props }, forwardedRef ) => {
         const { value, ...restProps } = props
 
@@ -45,9 +48,17 @@ const ForwardedRefInput = React.forwardRef<ForwardedRefInputElement, ForwardedRe
             {...props}/>
     }
 )
-export default React.memo(ForwardedRefInput)
+ForwardRefInput = React.memo(ForwardRefInput)
 
-export type {
-    ForwardedRefInputProps,
-    ForwardedRefInputElement,
+
+
+export {
+  type ForwardedRefInputProps,
+  type ForwardedRefInputElement,
+  ForwardRefInput as default,
 }
+/*
+export type {
+  ForwardedRefInputProps,
+  ForwardedRefInputElement,
+}*/

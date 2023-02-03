@@ -1,13 +1,12 @@
 import styled from "styled-components";
-//import {useId} from "react";
+import {useId} from "react";
 
 
-// todo upgrade to react 18
 
 
 const CustomAttrs = () => {
 
-    //const id = useId()
+    const id = useId()
 
     const customAttrs = {
         'data-has-error': 'yes',
@@ -16,21 +15,22 @@ const CustomAttrs = () => {
     }
 
     return <div>
-        {/*<Div hasError>
+        <Div hasError>
             <div id={`${id}-asdfg`} {...customAttrs}></div>
-        </Div>*/}
+        </Div>
     </div>
 }
 export default CustomAttrs
 
 
-/*
 
-const Div = styled.div<{ hasError: boolean }>.attrs(p=>({
+type DivProps = {
+    hasError: boolean
+}
+const Div = styled.div.attrs<DivProps>(p=>({
     'data-has-error': 'no',
-    // @ts-ignore
     'data-hasError': p.hasError,
-}))`
+}))<DivProps>`
   width: 200px; height: 200px;
   background: red;
   
@@ -54,4 +54,3 @@ const Div = styled.div<{ hasError: boolean }>.attrs(p=>({
   }
   
 `
-*/

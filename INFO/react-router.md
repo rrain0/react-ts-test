@@ -150,6 +150,6 @@ export default function() {
 ```typescript jsx
 import { Navigate } from "react-router-dom";
 export default function() {
-    return <Navigate to='/landing' />
+    return <Navigate to='/landing' replace={true}/>
 }
 ```

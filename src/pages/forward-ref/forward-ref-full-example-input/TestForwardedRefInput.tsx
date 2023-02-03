@@ -1,5 +1,5 @@
 import React, {useRef} from "react";
-import ForwardedRefInput, {ForwardedRefInputElement} from "./ForwardedRefInput";
+import ForwardedRefInput, {ForwardedRefInputElement} from "./ForwardRefInput";
 
 
 const TestForwardedRefInput = () => {

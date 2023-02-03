@@ -6,7 +6,8 @@ import {typescriptTest} from "./EXAMPLES/TYPESCRIPT-TEST";
 import StateAndRefAndLocalReducerTest from "./pages/StateAndRefAndLocalReducerTest";
 import HtmlXmlParsing from "./pages/HtmlXmlParsing";
 import StyledComponents from "./pages/StyledComponents/StyledComponents";
-import TestForwardedRefInput from "./pages/forward-ref/TestForwardedRefInput";
+import TestForwardedRefInput from "./pages/forward-ref/forward-ref-full-example-input/TestForwardedRefInput";
+import ComponentWithExpandableContent from "./components/ComponentWithExpandableContent";
 
 const SocketIOChat = React.lazy(()=>import("./pages/SocketIOChat")) // React lazy
 const ThrowError = React.lazy(()=>import("./pages/ThrowError")) // React lazy
@@ -33,6 +34,7 @@ useEffect(()=>typescriptTest(),[])
                 <Route path="/html-xml-parsing" element={<HtmlXmlParsing/>} />
                 <Route path="/styled-components" element={<StyledComponents/>} />
                 <Route path="/forward-ref" element={<TestForwardedRefInput/>} />
+                <Route path="/test-expandable" element={<ComponentWithExpandableContent/>} />
                 <Route path='*' element={<Navigate to='/landing'/>} />
             </Routes>
         </Suspense>
