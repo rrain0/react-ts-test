@@ -2,7 +2,7 @@ import SomeSvgIc1 from "src/components/SvgIcons/SomeSvgIc1"
 import SomeSvgIc2 from "src/components/SvgIcons/SomeSvgIc2"
 import SomeSvgIc3 from "src/components/SvgIcons/SomeSvgIc3"
 import LoadingIc from "src/components/SvgIcons/LoadingIc"
-import SomeSvgIc4 from "../components/SvgIcons/SomeSvgIc4";
+import SomeSvgIc4CssProperties from "../components/SvgIcons/SomeSvgIc4CssProperties";
 
 
 const SvgTest = () => {
@@ -69,13 +69,13 @@ const SvgTest = () => {
 
         <div style={{display: 'flex', flexFlow: 'row nowrap'}}>
             <div style={{height:200, width:200, background: 'yellow'}}>
-                <SomeSvgIc4 color1={"gold"} color2={"red"} color3={"blue"} color4={"green"} />
+                <SomeSvgIc4CssProperties color1={"gold"} color2={"red"} color3={"blue"} color4={"green"} />
             </div>
             <div style={{height:200, width:100, border: '1px solid red'}}>
-                <SomeSvgIc4 color1={"aqua"} color2={"aqua"} color3={"aqua"} color4={"aqua"} />
+                <SomeSvgIc4CssProperties color1={"aqua"} color2={"aqua"} color3={"aqua"} color4={"aqua"} />
             </div>
             <div style={{height:100, width:200, border: '1px solid red'}}>
-                <SomeSvgIc4 color1={"aquamarine"} color2={"aquamarine"} color3={"aquamarine"} color4={"aquamarine"} />
+                <SomeSvgIc4CssProperties color1={"aquamarine"} color2={"aquamarine"} color3={"aquamarine"} color4={"aquamarine"} />
             </div>
         </div>
 

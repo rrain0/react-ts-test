@@ -1,5 +1,5 @@
 
-import {ReactComponent as LoadingSvg} from "src/assets/icons/loading.svg"
+import {ReactComponent as LoadingSvg} from "src/res/icon/loading.svg"
 import css from "./LoadingIc.module.scss"
 
 

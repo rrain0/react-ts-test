@@ -163,3 +163,52 @@ export function classTest() {
     }
 }
 
+
+
+
+
+
+// TypeScript 5.3+
+export function instanceofOverriding() {
+    interface PointLike {
+        x: number;
+        y: number;
+    }
+    
+    class Point implements PointLike {
+        x: number;
+        y: number;
+        
+        constructor(x: number, y: number) {
+            this.x = x;
+            this.y = y;
+        }
+        
+        distanceFromOrigin() {
+            return Math.sqrt(this.x ** 2 + this.y ** 2);
+        }
+        
+        // is POINT LIKE, not POINT
+        static [Symbol.hasInstance](val: unknown): val is PointLike {
+            return !!val && typeof val === "object" &&
+              "x" in val && "y" in val &&
+              typeof val.x === "number" &&
+              typeof val.y === "number";
+        }
+    }
+    
+    
+    function f(value: unknown) {
+        if (value instanceof Point) {
+            // Can access both of these - correct!
+            const x = value.x
+            const y = value.y
+            
+            // Will be error - this is correct!
+            // Can't access this - we have a 'PointLike',
+            // but we don't *actually* have a 'Point'.
+            //value.distanceFromOrigin()
+        }
+    }
+}
+

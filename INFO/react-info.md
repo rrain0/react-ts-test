@@ -168,6 +168,38 @@ Returned function будет выполняться перед каждым сл
 
 
 
+
+
+`useLayoutEffect` - аналогично `useEffect`, но выполняется после того,
+как DOM готов к отрисовке, но перед самой отрисовкой.<br>
+https://ru.reactjs.org/docs/hooks-reference.html#uselayouteffect
+аналог:
+`showChild && <Child />` + `useEffect(() => { setShowChild(true); }, [])`
+```typescript jsx
+// must NOT be useLayoutEffect so ref from props won't be null
+useEffect(
+  ()=>{
+    const target = props.targetElement.current
+    if (target){
+      target.addEventListener('pointerdown',showRipple)
+      target.addEventListener('pointerup',hideRipple)
+      target.addEventListener('pointerout',hideRipple) // 'out' is 'leave' + 'cancel'
+      return ()=>{
+        target.removeEventListener('pointerdown',showRipple)
+        target.removeEventListener('pointerup',hideRipple)
+        target.removeEventListener('pointerout',hideRipple)
+      }
+    }
+  },
+  [
+    props.targetElement.current,
+    showRipple, hideRipple,
+  ]
+)
+```
+
+
+
 You can hack the useMemo hook to imitate a componentWillMount lifecycle event. Just do:
 ```typescript jsx
 const Component = () => {
@@ -202,11 +234,6 @@ function Component(props) {
 ```
 
 
-
-`useLayoutEffect` - аналогично `useEffect`, но выполняется после того, как DOM готов к отрисовке, но перед самой отрисовкой
-https://ru.reactjs.org/docs/hooks-reference.html#uselayouteffect
-аналог:
-`showChild && <Child />` + `useEffect(() => { setShowChild(true); }, [])`
 
 
 

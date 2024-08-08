@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    // TS 5.0+
+    // You can extend from other configs
+    "extends": ["./tsconfig.base1.json","./tsconfig.base2.json"]
+  }
+}

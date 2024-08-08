@@ -1,5 +1,6 @@
 import ForwardRefButton from "./ForwardRefButton";
-import {ReactMemoTyped} from "src/utils/utilsReact";
+import {ReactUtils} from "src/utils/react-utils";
+import ReactMemoTyped = ReactUtils.ReactMemoTyped;
 
 
 const TestForwardRefButton = () => {

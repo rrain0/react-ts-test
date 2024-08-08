@@ -1,5 +1,5 @@
 import React from 'react'
-import { ReactComponent as SomeSvgSvg } from 'src/assets/icons/some-svg-3.svg'
+import { ReactComponent as SomeSvgSvg } from 'src/res/icon/some-svg-3.svg'
 
 // todo maybe using of css variables will be better
 

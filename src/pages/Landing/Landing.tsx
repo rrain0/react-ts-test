@@ -1,5 +1,5 @@
 import React from "react";
-import reactLogo from '../../assets/icons/react-logo.svg';
+import reactLogo from '../../res/icon/react-logo.svg';
 //import reactLogo from '@ic/react-logo.svg';
 import s from './Landing.module.scss';
 import {Link} from "react-router-dom";

@@ -1,5 +1,5 @@
 import React from 'react'
-import { ReactComponent as SomeSvgSvg } from '../../assets/icons/some-svg-1.svg'
+import { ReactComponent as SomeSvgSvg } from '../../res/icon/some-svg-1.svg'
 
 const SomeSvgIc1 = ({color, size}: {color:string, size?:number}) => {
     return <SomeSvgSvg

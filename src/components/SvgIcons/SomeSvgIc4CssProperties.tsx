@@ -1,9 +1,9 @@
 import React, {useLayoutEffect, useRef} from 'react'
-import { ReactComponent as SomeSvgSvg } from 'src/assets/icons/some-svg-4.svg'
+import { ReactComponent as SomeSvgSvg } from 'src/res/icon/some-svg-4.svg'
 
 // USING CSS VARIABLES
 
-const SomeSvgIc4 = (
+const SomeSvgIc4CssProperties = (
     {color1, color2, color3, color4, size}
         : {color1:string, color2:string, color3:string, color4:string, size?:number}) => {
 
@@ -22,4 +22,4 @@ const SomeSvgIc4 = (
         style={{ width: size, height: size, maxWidth: '100%', maxHeight: '100%' }}
     />
 }
-export default SomeSvgIc4
+export default SomeSvgIc4CssProperties

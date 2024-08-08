@@ -1,5 +1,9 @@
 
 
+import React from "react"
+
+
+
 
 // html div props
 type HtmlDivProps = React.HTMLAttributes<HTMLDivElement>
@@ -17,5 +21,17 @@ type OnClickHandler2 = (ev: React.MouseEvent<HTMLButtonElement>)=>void
 
 // inline style props (eg <div style=... />)
 type InlineStyle = React.CSSProperties
+
+
+// children
+type ReactNodeType = React.ReactNode
+// from docs: type ReactNode = ReactElement | string | number | ReactFragment | ReactPortal | boolean | null | undefined;
+// ReactFragment - это <></>
+
+
+// React Component
+type ReactComponent = React.ComponentType
+// const component: React.ComponentType = <div/>
+
 
 export {}

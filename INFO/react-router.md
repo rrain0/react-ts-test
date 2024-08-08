@@ -39,7 +39,9 @@ import { Link } from "react-router-dom";
 ```
 
 ### Active Links
-They are highlighted if route match to them
+They can be highlighted if route match to them:<br>
+● via `isActive` in props<br>
+● via `<a class="active">...</a>` in generated html<br>
 ```typescript jsx
     <NavLink
         style={({ isActive }) => {
@@ -129,6 +131,28 @@ const location = {
     key: "ae4cz2j"
 }
 ```
+
+## useMatch
+Gets selected part of URL.
+If selected part ```does not exist``` or ```empty string``` then returns ```undefined```
+```typescript jsx
+import { useMatch } from "react-router-dom";
+function GetSelectedUrlPart() {
+  // we are on path '/profile/someId/main'
+  // path can be '/profile/someId/main' '/profile/someId/favorite'
+  const thisPageBaseUrl = '/profile/someId'
+  // lastUrlPart will have value 'main' - that is places instead of ':subPage' selector
+  let lastUrlPart = useMatch(thisPageBaseUrl,':subPage')?.params.subPage
+  lastUrlPart = useMatch(thisPageBaseUrl,':subPage')?.params[':subPage'.slice(1)]
+  
+  // '/*' allows nested paths to be
+  let somePathSegment = useMath('/profile/:id/*')?.params.id
+  
+  return <></>
+}
+```
+
+
 ### Persist search params when nav:
 ```typescript jsx
 import { useLocation, NavLink } from "react-router-dom";
