@@ -706,46 +706,6 @@ export function genericTest() {
   }
   
   
-  {
-    /*
-     Type variance:
-     ● <T> - no explicit variance - auto detection of variance
-     ● <in T> - covariance - parameter only for read from it (in = input parameter)
-     You can use T or its parents.
-     ● <out T> - contravariance - parameter only for write into it (out = output parameter)
-     You can use T or its children.
-     ● <in out T> - invariance - parameter for read & write
-     You can use only T.
-     You shouldn't explicitly specify variance everywhere!!!
-     */
-    interface Animal { animalStuff: any }
-    interface Dog extends Animal { dogStuff: any }
-    type Getter<out T> = ()=>T // T is output parameter - write into T and out
-    type Setter<in T> = (value: T)=>void // T is input parameter - in and read from T
-    interface State<in out T> {
-      get: ()=>T
-      set: (value: T)=>void
-    }
-    
-    let getterAnimal: Getter<Animal> = function (this: Animal){ return this }
-    let getterDog: Getter<Dog> = function (this: Dog){ return this }
-    let setterAnimal: Setter<Animal> = function (this: Animal, animal: Animal){  }
-    let setterDog: Setter<Dog> = function (this: Dog, dog: Dog){  }
-    
-    const ga: Getter<Animal> = getterDog
-    //const gd: Getter<Dog> = getterAnimal // error
-    //const sa: Setter<Animal> = setterDog // error
-    const sd: Setter<Dog> = setterAnimal
-    
-    const state: { internalDog: Dog } & State<Dog> = {
-      internalDog: { animalStuff: 'as', dogStuff: 'ds' },
-      get: ()=>({ animalStuff: 'bbb', dogStuff: 'aaa' }),
-      set(v){ this.internalDog = v },
-    }
-    const dog = state.get()
-  }
-  
-  
   // TS 5.0+
   // Auto const inference
   // Works for function & class generics
